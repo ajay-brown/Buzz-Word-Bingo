@@ -5,16 +5,14 @@ var jsonParser = bodyParser.json();
 const PORT = 8080;
 let buzzWords = [];
 
-app.use(
-  express.static("/public", next => {
-    next();
-  })
-);
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.get("/", (req, res) =>
-  res.sendFile("public/index.html", { root: __dirname })
-);
+
+app.get("/css/styles.css", (req, res) => {
+  //adding the css
+  res.sendFile("/css/styles.css", { root: __dirname });
+});
 
 app.get("/buzzwords", (req, res) => {
   res.json(buzzWords); //return buzzWords obj as JSON
@@ -24,15 +22,6 @@ app.get("/buzzwords", (req, res) => {
 
 app.post("/buzzwords", (req, res) => {
   let newWord = req.body;
-  //   for (var i = 0; i < buzzWords.length; i++) {
-  //     //if buzzWord already exists in array, overwite
-  //     if (buzzWords[i].buzzWord === newWord.buzzWord) {
-  //       buzzWords[i].buzzWord = newWord.buzzWord;
-  //       buzzWords[i].points = newWord.points;
-  //       res.end();
-  //       return buzzWords;
-  //     }
-  //   }
   if (buzzWords.length > 5) {
     //err if more than 5 objects
     res.append("success", "false").end();
@@ -42,7 +31,10 @@ app.post("/buzzwords", (req, res) => {
       points: newWord.points
     });
     res.end();
-    console.log(buzzWords);
+    res.render("/public/index.html", (err, html) => {
+      buzzWords = buzzWords;
+    });
+
     return buzzWords;
   }
 });
